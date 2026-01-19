@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: trunk
+  name: trunk
+spec:
+  containers:
+  - image: nginx
+    name: webserver
+    volumeMounts: 
+    - mountPath: /web-tree
+      name: nginx-directory
+    ports:
+    resources:
+      limits:
+        cpu: "0.5"
+        memory: "128Mi"
+      requests:
+        cpu: "0.3"
+        memory: "64Mi"
+  - image: ubuntu
+    name: ubuntu
+    volumeMounts:
+    - mountPath: /acess-tree
+      name: ubuntu-directory
+    resources:
+      limits:
+        cpu: "0.7"
+        memory: "256Mi"
+      requests:
+        cpu: "0.5"
+        memory: "128Mi"
+    command: 
+    - bin/bash
+    args:
+      - -c
+      - |
+        apt update
+        apt install curl
+        sleep 1800
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+  volumes:
+  - name: nginx-directory
+    emptyDir: 
+      sizeLimit: 128Mi
+  - name: ubuntu-directory
+    emptyDir:
+      sizeLimit: 256Mi
+status: {}
